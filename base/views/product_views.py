@@ -84,8 +84,6 @@ def updateProduct(request, pk):
 
         product = product[0]
         serializer = ProductSerializer(product, many=False)
-        print("Se==>", serializer.data)
-        print("Product==>", product)
 
         if 'name' in data:
             product.name = data['name']
@@ -118,7 +116,6 @@ def deleteProduct(request, pk):
     try:
         product = Product.objects.filter(id=pk)
         if not product:
-            print("Hello")
             return Response(make_error_response(f"Product with id {pk} does not exist"), status=status.HTTP_404_NOT_FOUND)
         product = product[0]
         product.delete()
@@ -133,7 +130,6 @@ def createProductReview(request, pk):
         user = request.user
         product = Product.objects.filter(id=pk)
         if not product:
-            print("Hello")
             return Response(make_error_response(f"Product with id {pk} does not exist"), status=status.HTTP_404_NOT_FOUND)
         product = product[0]
         data = request.data
@@ -149,7 +145,6 @@ def createProductReview(request, pk):
             review = Review.objects.create(
                 user=user,
                 product=product,
-                name=user.first_name,
                 rating=data['rating'],
                 comment=data['comment'],
             )
@@ -168,5 +163,5 @@ def createProductReview(request, pk):
             serializer = ReviewSerializer(review, many=False)
 
             return Response(serializer.data)
-    except:
+    except Exception as e:
         return Response(make_error_response(f"Unable to create review for product with id:{pk}"), status=status.HTTP_400_BAD_REQUEST)
